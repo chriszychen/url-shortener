@@ -15,10 +15,25 @@ db.once('open', () => {
 })
 app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
+app.use(express.static('public'))
+app.use(express.urlencoded({ extended: true }))
 
 // routes setting
 app.get('/', (req, res) => {
-  res.send('Hello')
+  res.render('index')
+})
+
+app.post('/url', (req, res) => {
+  res.redirect('/url/success')
+  // const url = req.body.url
+})
+
+app.get('/url/success', (req, res) => {
+  const url = {
+    originalUrl: 'https://www.google.com',
+    hashCodes: 'CM90r'
+  }
+  res.render('success', { url })
 })
 
 // listening to the server
