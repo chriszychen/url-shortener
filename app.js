@@ -38,5 +38,5 @@ app.get('/url/success', (req, res) => {
 
 // listening to the server
 app.listen(3000, () => {
-  console.log('The server is listening on http://localhost:3000')
+  console.log('The App is running on http://localhost:3000')
 })
