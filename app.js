@@ -26,19 +26,26 @@ app.get('/', (req, res) => {
 })
 
 // add input to database
-app.post('/', (req, res) => {
-  const { originalUrl } = req.body
-  const hashCodes = generateHashCodes()
-  let isSuccessful = false
+app.post('/', async (req, res) => {
   // 參考同學寫法
-  const hostname = 'localhost:3000'
-  const shortUrl = `${req.protocol}://${hostname}/${hashCodes}`
-  return Url.create({ originalUrl, hashCodes })
-    .then(() => {
-      isSuccessful = true
-      res.render('index', { isSuccessful, shortUrl })
-    })
-    .catch(err => console.log(err))
+  try {
+    const { originalUrl } = req.body
+    const isUrlExist = await Url.exists({ originalUrl: originalUrl })
+    let hashCodes
+    if (isUrlExist) {
+      const existUrl = await Url.findOne({ originalUrl: originalUrl })
+      hashCodes = existUrl.hashCodes
+    } else {
+      hashCodes = generateHashCodes()
+      await Url.create({ originalUrl, hashCodes })
+    }
+    const hostname = 'localhost:3000'
+    const shortUrl = `${req.protocol}://${hostname}/${hashCodes}`
+    const isSuccessful = true
+    res.render('index', { isSuccessful, shortUrl })
+  } catch (error) {
+    console.log(error)
+  }
 })
 
 // redirect the shortened url
