@@ -17,9 +17,11 @@
   <div class="result-box mx-auto">
     <h2>Success! Please use this link:</h2>
     <a href="{{ shortUrl }}" target="_blank">
-      <h4>{{ shortUrl }}</h4>
+      <h4 id="url-text">{{ shortUrl }}</h4>
     </a>
   </div>
-  <button type="button" class="btn btn-primary btn-lg my-4">Copy</button>
+  <a href="/" class="btn btn-secondary btn-lg my-4">Shorten another URL</a>
+  <button type="button" id="copy-button" class="btn btn-primary btn-lg my-4 mr-3">Copy</button>
+  <p id="copy-text"></p>
   {{/if}}
 </div>
