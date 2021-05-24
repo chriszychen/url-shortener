@@ -2,6 +2,8 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const exphbs = require('express-handlebars')
+const generateHashCodes = require('./generate_hash_codes')
+const Url = require('./models/url')
 const app = express()
 
 // module setting
@@ -23,17 +25,29 @@ app.get('/', (req, res) => {
   res.render('index')
 })
 
-app.post('/url', (req, res) => {
-  res.redirect('/url/success')
-  // const url = req.body.url
+// add input to database
+app.post('/', (req, res) => {
+  const { originalUrl } = req.body
+  const hashCodes = generateHashCodes()
+  let isSuccessful = false
+  // 參考同學寫法
+  const hostname = 'localhost:3000'
+  const shortUrl = `${req.protocol}://${hostname}/${hashCodes}`
+  return Url.create({ originalUrl, hashCodes })
+    .then(() => {
+      isSuccessful = true
+      res.render('index', { isSuccessful, shortUrl })
+    })
+    .catch(err => console.log(err))
 })
 
-app.get('/url/success', (req, res) => {
-  const url = {
-    originalUrl: 'https://www.google.com',
-    hashCodes: 'CM90r'
-  }
-  res.render('success', { url })
+// redirect the shortened url
+app.get('/:codes', (req, res) => {
+  const { codes } = req.params
+  return Url.findOne({ hashCodes: codes })
+    .lean()
+    .then(url => res.redirect(url.originalUrl))
+    .catch(err => console.log(err))
 })
 
 // listening to the server

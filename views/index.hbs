@@ -1,14 +1,25 @@
 <div class="container my-3 text-center">
   <h1>URL Shortener</h1>
-  <div class="image p-4">
+  <div class="image-box p-4">
     <img style="max-height: 250px;" src="/URL-icon.png" alt="URL icon">
     <div class="my-2">Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a
         href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
   </div>
+  {{#unless isSuccessful}}
   <div class="form-box w-75 mx-auto">
-    <form action="/url" method="post">
-      <input type="url" name="url" id="url" placeholder="Input URL Here" class="form-control">
+    <form action="/" method="POST">
+      <input type="url" name="originalUrl" id="originalUrl" placeholder="Input URL Here" class="form-control">
       <button type="submit" class="btn btn-outline-primary my-4 w-50">Shorten</button>
     </form>
   </div>
+  {{/unless}}
+  {{#if isSuccessful}}
+  <div class="result-box mx-auto">
+    <h2>Success! Please use this link:</h2>
+    <a href="{{ shortUrl }}" target="_blank">
+      <h4>{{ shortUrl }}</h4>
+    </a>
+  </div>
+  <button type="button" class="btn btn-primary btn-lg my-4">Copy</button>
+  {{/if}}
 </div>
