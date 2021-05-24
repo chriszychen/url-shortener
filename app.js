@@ -45,6 +45,7 @@ app.post('/', async (req, res) => {
     res.render('index', { isSuccessful, shortUrl })
   } catch (error) {
     console.log(error)
+    return res.send('<h1>Fail to shorten this URL! <a href="/">Try again.</a></h1>')
   }
 })
 
@@ -54,7 +55,10 @@ app.get('/:codes', (req, res) => {
   return Url.findOne({ hashCodes: codes })
     .lean()
     .then(url => res.redirect(url.originalUrl))
-    .catch(err => console.log(err))
+    .catch(err => {
+      console.log(err)
+      return res.send('<h1>Wrong URL! Please click <a href="/">here</a> to create short URL.</h1>')
+    })
 })
 
 // listening to the server
