@@ -3,19 +3,19 @@ function getRandomItem(array) {
   return array[randomIndex]
 }
 
-function generateHashCodes() {
+function generateShortCodes() {
   // hash code elements
   const lowerCaseLetters = 'abcdefghijklmnopqrstuvwxyz'
   const upperCaseLetters = lowerCaseLetters.toUpperCase()
   const numbers = '1234567890'
   // add elements into an array
   const collection = [].concat([...lowerCaseLetters]).concat([...upperCaseLetters]).concat([...numbers])
-  // create a 5 digit hash codes
-  let hashCodes = ''
+  // create a 5 digit short codes
+  let shortCodes = ''
   for (let i = 1; i <= 5; i++) {
-    hashCodes += getRandomItem(collection)
+    shortCodes += getRandomItem(collection)
   }
-  return hashCodes
+  return shortCodes
 }
 
-module.exports = generateHashCodes
+module.exports = generateShortCodes

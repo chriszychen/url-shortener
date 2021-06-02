@@ -3,7 +3,7 @@ const Schema = mongoose.Schema
 
 const urlSchema = new Schema({
   originalUrl: { type: String, required: true },
-  hashCodes: { type: String, required: true }
+  shortCodes: { type: String, required: true }
 })
 
 module.exports = mongoose.model('Url', urlSchema)

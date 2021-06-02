@@ -2,7 +2,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const exphbs = require('express-handlebars')
-const generateHashCodes = require('./generate_hash_codes')
+const generateShortCodes = require('./generate_short_codes')
 const Url = require('./models/url')
 const app = express()
 
@@ -31,16 +31,16 @@ app.post('/', async (req, res) => {
   try {
     const { originalUrl } = req.body
     const isUrlExist = await Url.exists({ originalUrl: originalUrl })
-    let hashCodes
+    let shortCodes
     if (isUrlExist) {
       const existUrl = await Url.findOne({ originalUrl: originalUrl })
-      hashCodes = existUrl.hashCodes
+      shortCodes = existUrl.shortCodes
     } else {
-      hashCodes = generateHashCodes()
-      await Url.create({ originalUrl, hashCodes })
+      shortCodes = generateShortCodes()
+      await Url.create({ originalUrl, shortCodes })
     }
     const hostname = 'localhost:3000'
-    const shortUrl = `${req.protocol}://${hostname}/${hashCodes}`
+    const shortUrl = `${req.protocol}://${hostname}/${shortCodes}`
     const isSuccessful = true
     res.render('index', { isSuccessful, shortUrl })
   } catch (error) {
@@ -50,9 +50,9 @@ app.post('/', async (req, res) => {
 })
 
 // redirect the shortened url
-app.get('/:codes', (req, res) => {
-  const { codes } = req.params
-  return Url.findOne({ hashCodes: codes })
+app.get('/:shortCodes', (req, res) => {
+  const { shortCodes } = req.params
+  return Url.findOne({ shortCodes })
     .lean()
     .then(url => res.redirect(url.originalUrl))
     .catch(err => {
