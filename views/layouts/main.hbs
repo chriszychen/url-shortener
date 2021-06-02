@@ -12,21 +12,7 @@
 
 <body>
   {{{ body }}}
-  <script>
-    const copyButton = document.querySelector('#copy-button')
-    copyButton.addEventListener('click', event => {
-      const urlText = document.querySelector('#url-text').textContent
-      const copyText = document.querySelector('#copy-text')
-      navigator.clipboard.writeText(urlText)
-        .then(() => {
-          copyText.textContent = 'Copied!'
-        })
-        .catch(err => {
-          console.log(err)
-          copyText.textContent = 'Failed to copy'
-        })
-    })
-  </script>
+  <script src="javascripts/script.js"></script>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
     integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
     crossorigin="anonymous"></script>
