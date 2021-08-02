@@ -41,7 +41,7 @@ app.post('/', async (req, res) => {
       shortCode = generatedShortCode
       await Url.create({ originalUrl, shortCode })
     }
-    const shortUrl = `${req.protocol}://${req.hostname}:${process.env.NODE_ENV === 'production' ? '' : port}/${shortCode}`
+    const shortUrl = `${req.protocol}://${req.hostname}${process.env.NODE_ENV === 'production' ? '' : ':' + port}/${shortCode}`
     return res.render('index', { isSuccessful: true, shortUrl })
   } catch (error) {
     console.log(error)
