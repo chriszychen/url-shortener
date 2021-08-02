@@ -33,17 +33,15 @@ app.post('/', async (req, res) => {
       shortCode = existUrl.shortCode
     } else {
       // 產生縮址並查詢資料庫中是否有重覆的縮址，確認無重複就新增一筆Url資料進資料庫
-      let isShortCodeExist
+      let generatedShortCode, isShortCodeExist
       do {
-        const generatedShortCode = generateShortCode()
+        generatedShortCode = generateShortCode()
         isShortCodeExist = await Url.exists({ shortCode: generatedShortCode })
-        if (!isShortCodeExist) {
-          shortCode = generatedShortCode
-        }
       } while (isShortCodeExist)
+      shortCode = generatedShortCode
       await Url.create({ originalUrl, shortCode })
     }
-    const shortUrl = `${req.protocol}://${req.hostname}:${port}/${shortCode}`
+    const shortUrl = `${req.protocol}://${req.hostname}:${process.env.NODE_ENV === 'production' ? '' : port}/${shortCode}`
     return res.render('index', { isSuccessful: true, shortUrl })
   } catch (error) {
     console.log(error)
@@ -59,7 +57,7 @@ app.get('/:shortCode', async (req, res) => {
     if (!url) {
       return res.render('index', { errorMessage: 'Wrong URL! Please check URL again or create another short URL.' })
     }
-    res.redirect(url.originalUrl)
+    return res.redirect(url.originalUrl)
   } catch (error) {
     console.log(error)
     return res.render('index', { errorMessage: 'Fail to link to original URL! Please try again.' })
