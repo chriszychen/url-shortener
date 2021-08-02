@@ -23,7 +23,8 @@ app.get('/', (req, res) => {
 app.post('/', async (req, res) => {
   try {
     const { originalUrl } = req.body
-    if (!originalUrl) return res.render('index', { errorMessage: '請輸入URL！' })
+    // 擋掉使用者沒有輸入的狀況
+    if (!originalUrl) return res.render('index', { errorMessage: 'URL is required!' })
     // 查詢資料庫是否存過此網址，有的話就取出該網址縮址
     const isUrlExist = await Url.exists({ originalUrl: originalUrl })
     let shortCode
@@ -46,7 +47,7 @@ app.post('/', async (req, res) => {
     return res.render('index', { isSuccessful: true, shortUrl })
   } catch (error) {
     console.log(error)
-    return res.send('<h1>Fail to shorten this URL! <a href="/">Try again.</a></h1>')
+    return res.render('index', { errorMessage: 'Fail to shorten this URL! Try again.' })
   }
 })
 
@@ -58,7 +59,7 @@ app.get('/:shortCode', async (req, res) => {
     res.redirect(url.originalUrl)
   } catch (error) {
     console.log(error)
-    return res.send('<h1>Wrong URL! Please click <a href="/">here</a> to create short URL.</h1>')
+    return res.render('index', { errorMessage: 'Wrong URL! Please check URL again or create another short URL.' })
   }
 })
 
