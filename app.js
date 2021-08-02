@@ -47,7 +47,7 @@ app.post('/', async (req, res) => {
     return res.render('index', { isSuccessful: true, shortUrl })
   } catch (error) {
     console.log(error)
-    return res.render('index', { errorMessage: 'Fail to shorten this URL! Try again.' })
+    return res.render('index', { errorMessage: 'Fail to shorten this URL! Please try again.' })
   }
 })
 
@@ -56,10 +56,13 @@ app.get('/:shortCode', async (req, res) => {
   try {
     const { shortCode } = req.params
     const url = await Url.findOne({ shortCode })
+    if (!url) {
+      return res.render('index', { errorMessage: 'Wrong URL! Please check URL again or create another short URL.' })
+    }
     res.redirect(url.originalUrl)
   } catch (error) {
     console.log(error)
-    return res.render('index', { errorMessage: 'Wrong URL! Please check URL again or create another short URL.' })
+    return res.render('index', { errorMessage: 'Fail to link to original URL! Please try again.' })
   }
 })
 
