@@ -2,7 +2,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const exphbs = require('express-handlebars')
-const generateShortCodes = require('./generate_short_codes')
+const generateShortCodes = require('./util/generate_short_codes')
 const Url = require('./models/url')
 const app = express()
 
@@ -27,7 +27,6 @@ app.get('/', (req, res) => {
 
 // add input to database
 app.post('/', async (req, res) => {
-  // 參考同學寫法
   try {
     const { originalUrl } = req.body
     const isUrlExist = await Url.exists({ originalUrl: originalUrl })
@@ -50,15 +49,16 @@ app.post('/', async (req, res) => {
 })
 
 // redirect the shortened url
-app.get('/:shortCodes', (req, res) => {
-  const { shortCodes } = req.params
-  return Url.findOne({ shortCodes })
-    .lean()
-    .then(url => res.redirect(url.originalUrl))
-    .catch(err => {
-      console.log(err)
-      return res.send('<h1>Wrong URL! Please click <a href="/">here</a> to create short URL.</h1>')
-    })
+app.get('/:shortCodes', async (req, res) => {
+  try {
+    const { shortCodes } = req.params
+    const url = await Url.findOne({ shortCodes })
+    console.log(url)
+    res.redirect(url.originalUrl)
+  } catch (error) {
+    console.log(error)
+    return res.send('<h1>Wrong URL! Please click <a href="/">here</a> to create short URL.</h1>')
+  }
 })
 
 // listening to the server
