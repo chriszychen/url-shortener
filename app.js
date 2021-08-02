@@ -1,20 +1,14 @@
 // variables
 const express = require('express')
-const mongoose = require('mongoose')
 const exphbs = require('express-handlebars')
 const generateShortCodes = require('./util/generate_short_codes')
 const Url = require('./models/url')
 const app = express()
+require('./config/mongoose')
+
+const port = process.env.PORT || 3000
 
 // module setting
-mongoose.connect('mongodb://localhost/url_shortener', { useNewUrlParser: true, useUnifiedTopology: true })
-const db = mongoose.connection
-db.on('error', () => {
-  console.log('mongodb error!')
-})
-db.once('open', () => {
-  console.log('mongodb connected!')
-})
 app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
 app.use(express.static('public'))
@@ -29,6 +23,7 @@ app.get('/', (req, res) => {
 app.post('/', async (req, res) => {
   try {
     const { originalUrl } = req.body
+    // 查詢資料庫是否存過此網址，有就抓出其shortCode，沒有就新增一個
     const isUrlExist = await Url.exists({ originalUrl: originalUrl })
     let shortCodes
     if (isUrlExist) {
@@ -38,10 +33,8 @@ app.post('/', async (req, res) => {
       shortCodes = generateShortCodes()
       await Url.create({ originalUrl, shortCodes })
     }
-    const hostname = 'localhost:3000'
-    const shortUrl = `${req.protocol}://${hostname}/${shortCodes}`
-    const isSuccessful = true
-    res.render('index', { isSuccessful, shortUrl })
+    const shortUrl = `${req.protocol}://${req.hostname}:${port}/${shortCodes}`
+    res.render('index', { isSuccessful: true, shortUrl })
   } catch (error) {
     console.log(error)
     return res.send('<h1>Fail to shorten this URL! <a href="/">Try again.</a></h1>')
@@ -53,7 +46,6 @@ app.get('/:shortCodes', async (req, res) => {
   try {
     const { shortCodes } = req.params
     const url = await Url.findOne({ shortCodes })
-    console.log(url)
     res.redirect(url.originalUrl)
   } catch (error) {
     console.log(error)
@@ -62,6 +54,6 @@ app.get('/:shortCodes', async (req, res) => {
 })
 
 // listening to the server
-app.listen(3000, () => {
+app.listen(port, () => {
   console.log('The App is running on http://localhost:3000')
 })

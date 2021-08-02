@@ -5,15 +5,6 @@
     <div class="my-2">Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a
         href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
   </div>
-  {{#unless isSuccessful}}
-  <div class="form-box w-75 mx-auto">
-    <form action="/" method="POST">
-      <input type="url" name="originalUrl" id="originalUrl" placeholder="Input URL Here. Ex: https://www.google.com"
-        class="form-control">
-      <button type="submit" class="btn btn-outline-primary my-4 w-50">Shorten</button>
-    </form>
-  </div>
-  {{/unless}}
   {{#if isSuccessful}}
   <div class="result-box mx-auto">
     <h2>Success! Please use this link:</h2>
@@ -24,5 +15,13 @@
   <a href="/" class="btn btn-secondary btn-lg my-4">Shorten another URL</a>
   <button type="button" id="copy-button" class="btn btn-primary btn-lg my-4 mr-3">Copy</button>
   <p id="copy-text"></p>
+  {{else}}
+  <div class="form-box w-75 mx-auto">
+    <form action="/" method="POST">
+      <input type="url" name="originalUrl" id="originalUrl" placeholder="Input URL Here. Ex: https://www.google.com"
+        class="form-control" required>
+      <button type="submit" class="btn btn-outline-primary my-4 w-50">Shorten</button>
+    </form>
+  </div>
   {{/if}}
 </div>
