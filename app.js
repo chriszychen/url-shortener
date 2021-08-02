@@ -1,7 +1,7 @@
 // variables
 const express = require('express')
 const exphbs = require('express-handlebars')
-const generateShortCodes = require('./util/generate_short_codes')
+const generateShortCode = require('./util/short_code_generator')
 const Url = require('./models/url')
 const app = express()
 require('./config/mongoose')
@@ -23,17 +23,25 @@ app.get('/', (req, res) => {
 app.post('/', async (req, res) => {
   try {
     const { originalUrl } = req.body
-    // 查詢資料庫是否存過此網址，有就抓出其shortCode，沒有就新增一個
+    // 查詢資料庫是否存過此網址，有的話就取出該網址縮址
     const isUrlExist = await Url.exists({ originalUrl: originalUrl })
-    let shortCodes
+    let shortCode
     if (isUrlExist) {
       const existUrl = await Url.findOne({ originalUrl: originalUrl })
-      shortCodes = existUrl.shortCodes
+      shortCode = existUrl.shortCode
     } else {
-      shortCodes = generateShortCodes()
-      await Url.create({ originalUrl, shortCodes })
+      // 產生縮址並查詢資料庫中是否有重覆的縮址，確認無重複就新增一筆Url資料進資料庫
+      let isShortCodeExist
+      do {
+        const generatedShortCode = generateShortCode()
+        isShortCodeExist = await Url.exists({ shortCode: generatedShortCode })
+        if (!isShortCodeExist) {
+          shortCode = generatedShortCode
+        }
+      } while (isShortCodeExist)
+      await Url.create({ originalUrl, shortCode })
     }
-    const shortUrl = `${req.protocol}://${req.hostname}:${port}/${shortCodes}`
+    const shortUrl = `${req.protocol}://${req.hostname}:${port}/${shortCode}`
     res.render('index', { isSuccessful: true, shortUrl })
   } catch (error) {
     console.log(error)
@@ -42,10 +50,10 @@ app.post('/', async (req, res) => {
 })
 
 // redirect the shortened url
-app.get('/:shortCodes', async (req, res) => {
+app.get('/:shortCode', async (req, res) => {
   try {
-    const { shortCodes } = req.params
-    const url = await Url.findOne({ shortCodes })
+    const { shortCode } = req.params
+    const url = await Url.findOne({ shortCode })
     res.redirect(url.originalUrl)
   } catch (error) {
     console.log(error)

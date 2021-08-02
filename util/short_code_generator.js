@@ -3,7 +3,7 @@ function getRandomItem(array) {
   return array[randomIndex]
 }
 
-function generateShortCodes() {
+function generateShortCode() {
   // hash code elements
   const lowerCaseLetters = 'abcdefghijklmnopqrstuvwxyz'
   const upperCaseLetters = lowerCaseLetters.toUpperCase()
@@ -18,4 +18,4 @@ function generateShortCodes() {
   return shortCodes
 }
 
-module.exports = generateShortCodes
+module.exports = generateShortCode
