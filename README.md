@@ -1,4 +1,4 @@
-# Expense Tracker
+# URL Shortener
 利用Node.js + Express打造的簡易縮網址網站
 ![index image](https://github.com/chriszychen/url-shortener/blob/main/public/images/url-shortener-index.PNG)
 
